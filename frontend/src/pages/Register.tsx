@@ -1,12 +1,25 @@
 import { FaUser } from "react-icons/fa";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "react-toastify";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppThunk } from "../app/store";
+import { authSlice } from "../features/auth/authSlice";
+import { bindActionCreators } from "redux";
+import { actionCreators } from "../features/index";
+import type { State } from "../features/reducers/index";
+import { ActionType } from "../features/actions";
 
 type FormData = {
 	name: string;
 	email: string;
 	password: string;
 	passwordTwo: string;
+};
+
+type UserData = {
+	name: string;
+	email: string;
+	password: string;
 };
 
 function Register() {
@@ -16,6 +29,15 @@ function Register() {
 		password: "",
 		passwordTwo: "",
 	});
+
+	const state = useSelector((state: State) => state.user);
+	console.log(state);
+	const dispatch = useDispatch();
+	const foo = useSelector((state: RootState) => state.auth);
+
+	console.log(foo);
+
+	const { addUser } = bindActionCreators(actionCreators, dispatch);
 
 	const onChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setFormData(state => ({
@@ -28,6 +50,14 @@ function Register() {
 		event.preventDefault();
 		if (formData.password !== formData.passwordTwo) {
 			toast.error("password do not match");
+		} else {
+			const userData: UserData = {
+				name: formData.name,
+				email: formData.email,
+				password: formData.password,
+			};
+
+			dispatch(authSlice.actions.register(userData));
 		}
 	};
 
@@ -38,7 +68,8 @@ function Register() {
 					<FaUser />
 					Register
 				</h1>
-				<p>Please create account</p>
+				<p>Please create account </p>
+				<button onClick={() => addUser(1)}>Add user</button>
 			</section>
 			<section className='form'>
 				<form onSubmit={onSubmit}>

@@ -1,0 +1,3 @@
+function authService() {}
+
+export { authService };
